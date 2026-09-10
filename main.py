@@ -35,10 +35,11 @@ def consultar_sintomas(*sintomas):
           lista.append(sintoma)
      return lista
 
-def verificarPontos(quantidadeDePessoasAfetadas, caiu):
+def verificarPontos(quantidadeDePessoasAfetadas, caiu, criticidade=0, qtd_sintomas=0):
      ponts = 0
      caiu_bool = caiu.strip().upper() == "S"
 
+     # Pontuação por volume de pessoas afetadas + queda do sistema
      if caiu_bool and quantidadeDePessoasAfetadas >= 200:
           ponts += 14
      elif caiu_bool and quantidadeDePessoasAfetadas >= 100:
@@ -47,16 +48,56 @@ def verificarPontos(quantidadeDePessoasAfetadas, caiu):
           ponts += 7
      elif quantidadeDePessoasAfetadas >= 100:
           ponts += 5
+
+     ponts += criticidade
+     if qtd_sintomas >= 3:
+          ponts += 3
+     elif qtd_sintomas == 2:
+          ponts += 2
+     elif qtd_sintomas == 1:
+          ponts += 1
+
      return ponts
 
 calculo_prioridade = lambda ponts: f"Prioridade alta: {ponts}" if ponts >= 7 else f"prioridade normal: {ponts}"
 
+def processar_incidente(nome, sintomas, quantidadeDePessoasAfetadas, caiu):
+     resultado = consultar_servico(servicos, nome)
+     criticidade = resultado["criticidade"] if isinstance(resultado, dict) else 0
+     lista_sintomas = consultar_sintomas(*sintomas)
+     ponts = verificarPontos(quantidadeDePessoasAfetadas, caiu, criticidade, len(lista_sintomas))
+
+     print(resultado)
+     print(lista_sintomas)
+     print(calculo_prioridade(ponts))
+
+def executar_casos_de_teste():
+     print("=" * 50)
+     print("CASOS DE TESTE OBRIGATÓRIOS")
+     print("=" * 50)
+
+     print("\n--- Caso A ---")
+     processar_incidente(
+          "login",
+          ["senha rejeitada", "tela retorna ao início"],
+          20,
+          "N"
+     )
+
+     print("\n--- Caso B ---")
+     processar_incidente(
+          "pagamento",
+          ["checkout falha", "PIX indisponível", "cartão recusado"],
+          250,
+          "S"
+     )
+
+     print("\n" + "=" * 50)
+     print("FIM DOS CASOS DE TESTE")
+     print("=" * 50 + "\n")
+
+
+executar_casos_de_teste()
+
 nome, sintomas, quantidadeDePessoasAfetadas, caiu = exibir_perguntas()
-resultado = consultar_servico(servicos, nome)
-
-ponts = verificarPontos(quantidadeDePessoasAfetadas, caiu)
-
-print(resultado)
-print(consultar_sintomas(*sintomas))
-print(calculo_prioridade(ponts))
-
+processar_incidente(nome, sintomas, quantidadeDePessoasAfetadas, caiu)
