@@ -1,0 +1,16 @@
+Funcionalidade: O script implementa um sistema de triagem de incidentes técnicos.
+Ele armazena serviços cadastrados (login, pagamento, relatório, notificações) com seus níveis de criticidade,
+coleta dados de um incidente via input() (serviço afetado, sintomas, número de usuários impactados e se houve queda total do sistema),
+calcula uma pontuação de severidade com base na quantidade de pessoas afetadas e no status de queda, e classifica o incidente em "prioridade alta"
+(pontuação ≥ 7) ou "prioridade normal".
+
+Como usar: Execute o script e responda aos quatro prompts na ordem solicitada: nome do serviço (deve existir no dicionário servicos),
+sintomas separados por vírgula e espaço (ex: lento, erro 500), número inteiro de pessoas afetadas, e "S" ou "N" para indicar se o
+sistema caiu completamente — o programa então exibe os dados do serviço, a lista de sintomas processada e o nível de prioridade calculado.
+
+Integrante:
+Nicolas Ramalho - RM 572939
+João Arruda - RM 570342
+Diogo Bittar - RM 569657
+Vitor Viaro - RM 569804
+Lucas lima - RM 572047
