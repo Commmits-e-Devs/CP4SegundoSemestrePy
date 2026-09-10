@@ -20,7 +20,9 @@ servicos = {
 def exibir_perguntas():
      nome = input("Digite o serviço: ")
      sintomas = input("Digite os sintomas: ").split(", ")
-     return nome, sintomas
+     quantidadeDePessoasAfetadas = int(input("Digite a quantidade de pessoas afetadas: "))
+     caiu = input("O sistema caiu,Digite S/N :")
+     return nome, sintomas , quantidadeDePessoasAfetadas, caiu
 
 def consultar_servico(servicos,nome,erro="Serviço não encontrado."):
      if nome in servicos:
@@ -33,6 +35,19 @@ def consultar_sintomas(*sintomas):
           lista.append(sintoma)
      return lista
 
-nome, sintomas = exibir_perguntas()
+def verificarPontos(quantidadeDePessoasAfetadas,caiu):
+     ponts = 0
+     if caiu and quantidadeDePessoasAfetadas >= 200 :
+          ponts += 14
+     elif caiu and quantidadeDePessoasAfetadas >= 100 :
+          ponts += 10
+     elif quantidadeDePessoasAfetadas >= 100 :
+          ponts += 5
+     elif quantidadeDePessoasAfetadas >= 200 :
+          ponts += 7
+     return ponts
+
+nome, sintomas,quantidadeDePessoasAfetadas,caiu = exibir_perguntas()
 resultado = consultar_servico(servicos, nome)
+
 print(consultar_sintomas(*sintomas))
