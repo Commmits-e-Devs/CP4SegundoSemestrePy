@@ -35,11 +35,23 @@ def consultar_sintomas(*sintomas):
           lista.append(sintoma)
      return lista
 
+# Validação de entrada inválida
+def validar_entrada(nome, servicos, quantidadeDePessoasAfetadas, caiu):
+     if nome not in servicos:
+          return False, f"Erro: serviço '{nome}' não está cadastrado."
+
+     if quantidadeDePessoasAfetadas < 0:
+          return False, "Erro: a quantidade de pessoas afetadas não pode ser negativa."
+
+     if caiu.strip().upper() not in ("S", "N"):
+          return False, "Erro: resposta inválida para indisponibilidade. Use apenas S ou N."
+
+     return True, "Entrada válida."
+
 def verificarPontos(quantidadeDePessoasAfetadas, caiu, criticidade=0, qtd_sintomas=0):
      ponts = 0
      caiu_bool = caiu.strip().upper() == "S"
 
-     # Pontuação por volume de pessoas afetadas + queda do sistema
      if caiu_bool and quantidadeDePessoasAfetadas >= 200:
           ponts += 14
      elif caiu_bool and quantidadeDePessoasAfetadas >= 100:
@@ -57,18 +69,36 @@ def verificarPontos(quantidadeDePessoasAfetadas, caiu, criticidade=0, qtd_sintom
      elif qtd_sintomas == 1:
           ponts += 1
 
-     return ponts
+     return ponts, f"Pontuação baseada em {quantidadeDePessoasAfetadas} usuários e criticidade {criticidade}"
 
 calculo_prioridade = lambda ponts: f"Prioridade alta: {ponts}" if ponts >= 7 else f"prioridade normal: {ponts}"
 
 def processar_incidente(nome, sintomas, quantidadeDePessoasAfetadas, caiu):
+     valido, mensagem_validacao = validar_entrada(
+          nome=nome,
+          servicos=servicos,
+          quantidadeDePessoasAfetadas=quantidadeDePessoasAfetadas,
+          caiu=caiu
+     )
+
+     if not valido:
+          print(mensagem_validacao)
+          return
+
      resultado = consultar_servico(servicos, nome)
      criticidade = resultado["criticidade"] if isinstance(resultado, dict) else 0
      lista_sintomas = consultar_sintomas(*sintomas)
-     ponts = verificarPontos(quantidadeDePessoasAfetadas, caiu, criticidade, len(lista_sintomas))
+
+     ponts, mensagem = verificarPontos(
+          quantidadeDePessoasAfetadas=quantidadeDePessoasAfetadas,
+          caiu=caiu,
+          criticidade=criticidade,
+          qtd_sintomas=len(lista_sintomas)
+     )
 
      print(resultado)
      print(lista_sintomas)
+     print(mensagem)
      print(calculo_prioridade(ponts))
 
 def executar_casos_de_teste():
