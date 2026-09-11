@@ -17,12 +17,23 @@ servicos = {
      }
 }
 
+equipes = {
+    "login": "Equipe de Identidade",
+    "pagamento": "Equipe de Pagamentos",
+    "relatorio": "Equipe de Dados",
+    "notificacoes": "Equipe de Comunicação"
+}
+
 def exibir_perguntas():
      nome = input("Digite o serviço: ")
      sintomas = input("Digite os sintomas: ").split(", ")
      quantidadeDePessoasAfetadas = int(input("Digite a quantidade de pessoas afetadas: "))
      caiu = input("O sistema caiu, Digite S/N :")
      return nome, sintomas, quantidadeDePessoasAfetadas, caiu
+
+def consultar_equipe(nome, equipes):
+     if nome in equipes:
+          return equipes[nome]
 
 def consultar_servico(servicos, nome, erro="Serviço não encontrado."):
      if nome in servicos:
@@ -73,6 +84,11 @@ def verificarPontos(quantidadeDePessoasAfetadas, caiu, criticidade=0, qtd_sintom
 
 calculo_prioridade = lambda ponts: f"Prioridade alta: {ponts}" if ponts >= 7 else f"prioridade normal: {ponts}"
 
+def definir_prazo(prioridade):
+     if "Prioridade alta" in prioridade:
+          return "Ate 30 minutos"
+     return "Ate 4 horas"
+
 def processar_incidente(nome, sintomas, quantidadeDePessoasAfetadas, caiu):
      valido, mensagem_validacao = validar_entrada(
           nome=nome,
@@ -95,11 +111,14 @@ def processar_incidente(nome, sintomas, quantidadeDePessoasAfetadas, caiu):
           criticidade=criticidade,
           qtd_sintomas=len(lista_sintomas)
      )
+     prioridade = calculo_prioridade(ponts)
 
+     print(consultar_equipe(nome, equipes))
      print(resultado)
      print(lista_sintomas)
      print(mensagem)
-     print(calculo_prioridade(ponts))
+     print(prioridade)
+     print(definir_prazo(prioridade))
 
 def executar_casos_de_teste():
      print("=" * 50)
@@ -111,7 +130,7 @@ def executar_casos_de_teste():
           "login",
           ["senha rejeitada", "tela retorna ao início"],
           20,
-          "N"
+          "N",
      )
 
      print("\n--- Caso B ---")
@@ -131,3 +150,4 @@ executar_casos_de_teste()
 
 nome, sintomas, quantidadeDePessoasAfetadas, caiu = exibir_perguntas()
 processar_incidente(nome, sintomas, quantidadeDePessoasAfetadas, caiu)
+
